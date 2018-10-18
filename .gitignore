@@ -2,4 +2,6 @@ in*
 out*
 m_out*
 a.out
+a.out.*
 time.out
+.DS_Store
