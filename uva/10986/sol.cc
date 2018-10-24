@@ -7,49 +7,62 @@ using namespace std;
     #define dbg(...)
 #endif
 
-const int N_MAX = 20005, INF = 10000 * N_MAX;
-int T, n, m, src, dst, u, v, w, visit[N_MAX], cost[N_MAX];
-int W[N_MAX][N_MAX];
+const int N_MAX = 2e4 + 5, INF = 2e9;
+int T, n, m, s, t, u, v, w;
 vector<pair<int, int>> G[N_MAX];
-
+int cost[N_MAX];
+bool visit[N_MAX];
 
 int main()
 {
-    scanf("%d", &T);
-    for (int t = 1; t <= T; ++t) {
-        memset(visit, 0, sizeof(visit));
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    cin >> T;
+    for (int testcase = 1; testcase <= T; ++testcase) {
         memset(cost, INF, sizeof(cost));
-        for (int i = 0; i < N_MAX; ++i) {
+        memset(visit, 0, sizeof(visit));
+        for (int i = 0; i < N_MAX; ++i)
             G[i].clear();
-        }
-        scanf("%d %d %d %d", &n, &m, &src, &dst);
+
+        cin >> n >> m >> s >> t;
         for (int i = 0; i < m; ++i) {
             cin >> u >> v >> w;
-            G[u].push_back({v, w});
-            G[v].push_back({u, w});
+            G[u].emplace_back(v, w);
+            G[v].emplace_back(u, w);
         }
+        for (int i = 0; i < n; ++i) {
+            for (auto &p : G[i]) {
+                dbg("%d %d, ", p.first, p.second);
+            }
+            dbg("\n");
+        }
+        dbg("xx\n");
+
         priority_queue<pair<int, int>> Q;
-        Q.push({0, src});
-        cost[src] = 0;
+        Q.push(make_pair(0, s));
+        cost[s] = 0;
         while (!Q.empty()) {
             u = Q.top().second;
             Q.pop();
             if (visit[u]) continue;
-            if (u == dst) break;
             visit[u] = 1;
-            for (auto &par : G[u]) {
-                v = par.first;
-                w = par.second;
+            if (u == t) break;
+            for (auto &p : G[u]) {
+                v = p.first;
+                w = p.second;
+                dbg("%d %d %d\n", u, v, w);
                 if (cost[v] > cost[u] + w) {
                     cost[v] = cost[u] + w;
-                    Q.push({-cost[v], v});
+                    Q.push(make_pair(-cost[v], v));
                 }
             }
         }
-        if (cost[dst] >= INF) {
-            printf("Case #%d: unreachable\n", t);
+
+        cout << "Case #" << testcase << ": ";
+        if (cost[t] == INF) {
+            cout << "unreachable\n";
         } else {
-            printf("Case #%d: %d\n", t, cost[dst]);
+            cout << cost[t] << '\n';
         }
     }
     return 0;
