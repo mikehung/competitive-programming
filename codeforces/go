@@ -85,7 +85,7 @@ class CodeforcesProblemParser(HTMLParser):
 
     def handle_data(self, data):
         if self.start_copy:
-            self.testcase.write(data.encode('utf-8'))
+            self.testcase.write(data.strip().encode('utf-8'))
             self.end_line = False
 
 # Contest parser.
