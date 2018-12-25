@@ -1,49 +1,38 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 
-#ifdef DEBUG
-    #define dbg(...) fprintf(stderr, __VA_ARGS__)
-#else
-    #define dbg(...)
-#endif
-
-const int MAX = (int) 1e5+5;
-int n, a[MAX];
+const int MAX = (int) 1e5 + 112;
+int n, a[MAX], l[MAX], r[MAX];
 
 int main()
 {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cin >> n;
-    for (int i = 0; i < n; ++i) {
+    for (int i = 1; i <= n; ++i) {
         cin >> a[i];
     }
-    int i = 0, v = -1, ch = -1, type = 0, ans = 0;
-    for (int j = 0; j < n; ++j) {
-        ans = max(ans, j-i+1);
-        dbg("%d %d %d %d\n", i, j, a[i], a[j]);
-        if (j+1 < n && a[j] >= a[j+1]) {
-            if (type == 1) {
-                i = ch + 1;
-            } else if (type == 2){
-                i = ch;
-            }
-            a[ch] = v;
-            type = 0;
+    a[0] = 0, a[n+1] = INT_MAX;
+    for (int i = 1; i <= n; ++i) {
+        if (a[i] > a[i-1])
+            l[i] = l[i-1] + 1;
+        else
+            l[i] = 1;
+    }
+    for (int i = n; i >= 1; --i) {
+        if (a[i] < a[i+1])
+            r[i] = r[i+1] + 1;
+        else
+            r[i] = 1;
+    }
+    int ans = 0;
+    for (int i = 1; i <= n; ++i) {
+        int v = max(l[i-1], r[i+1]) + 1;
+        if (a[i-1] + 1 < a[i+1]) {
+            v = max(v, l[i-1] + r[i+1] + 1);
         }
-        if (j+1 < n && a[j] >= a[j+1]) {
-            if (j == 0 || a[j+1] - 1 > a[j-1]) {
-                v = a[j];
-                a[j] = a[j+1] - 1;
-                ch = j;
-                type = 1;
-            } else {
-                v = a[j+1];
-                a[j+1] = a[j] + 1;
-                ch = j + 1;
-                type = 2;
-            }
-        }
+        ans = max(ans, v);
     }
     cout << ans << '\n';
     return 0;
