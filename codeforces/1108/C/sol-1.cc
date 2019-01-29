@@ -4,26 +4,32 @@ using namespace std;
 
 const int MAX = (int) 2e5+123;
 int n, mn = MAX;
-string s, ans, color = "RGB";
+string s, ans;
+vector<vector<char>> colors = {
+    {'R', 'G', 'B'},
+    {'R', 'B', 'G'},
+    {'B', 'R', 'G'},
+    {'B', 'G', 'R'},
+    {'G', 'B', 'R'},
+    {'G', 'R', 'B'}};
 
 int main()
 {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cin >> n >> s;
-    sort(color.begin(), color.end());
-    do {
+    for (int i = 0; i < colors.size(); ++i) {
         int diff = 0;
         string t;
         for (int p = 0; p < n; ++p) {
-            t += color[p%3];
-            if (color[p%3] != s[p]) ++diff;
+            t += colors[i][p%3];
+            if (colors[i][p%3] != s[p]) ++diff;
         }
         if (diff < mn) {
             mn = diff;
             ans = t;
         }
-    } while (next_permutation(color.begin(), color.end()));
+    }
     cout << mn << '\n' << ans << '\n';
 
     return 0;
