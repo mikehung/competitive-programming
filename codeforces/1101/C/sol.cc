@@ -2,35 +2,42 @@
 
 using namespace std;
 
-int T, n, l, r;
-
 int main()
 {
     ios::sync_with_stdio(false);
     cin.tie(0);
-    cin >> T;
-    while (T--) {
+    int t;
+    cin >> t;
+    while (t--) {
+        int n, l, r, idx;
         cin >> n;
+        vector<tuple<int, int, int>> v(n);
         vector<int> ans(n, 2);
-        vector<pair<pair<int, int>, int>> v;
         for (int i = 0; i < n; ++i) {
             cin >> l >> r;
-            v.push_back(make_pair(make_pair(l, r), i));
+            v[i] = make_tuple(l, r, i);
         }
+        bool ok = false;
+        int end;
         sort(v.begin(), v.end());
-        int ok = -1;
-        for (int i = 0; i < n-1; ++i) {
-            ans[v[i].second] = 1;
-            if (v[i].first.second < v[i+1].first.first) {
-                ok = i;
+        for (int i = 0; i < n; ++i) {
+            tie(l, r, idx) = v[i];
+            if (i == 0) {
+                end = r;
+                ans[idx] = 1;
+            } else if (end < l) {
+                ok = true;
                 break;
+            } else {
+                end = max(end, r);
+                ans[idx] = 1;
             }
         }
-        if (ok == -1) {
+        if (!ok) {
             cout << -1 << '\n';
         } else {
-            for (int i = 0; i < n; ++i) {
-                cout << ans[i] << ' ';
+            for (auto &x: ans) {
+                cout << x << ' ';
             }
             cout << '\n';
         }
