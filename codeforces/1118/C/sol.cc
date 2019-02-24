@@ -5,7 +5,32 @@ using namespace std;
 const int MAX = 22;
 int n, ans[MAX][MAX];
 map<int, int> cnt;
-vector<int> v1, v2, v4;
+priority_queue<pair<int, int>> q;
+
+void no()
+{
+    cout << "NO\n";
+    exit(0);
+}
+
+void put(vector<pair<int, int>> v)
+{
+    pair<int, int> el = q.top();
+    q.pop();
+    if (v.size() > el.first) {
+        no();
+    }
+    for (auto &[r, c]: v) {
+        ans[r][c] = el.second;
+    }
+    el.first -= v.size();
+    q.push(el);
+}
+
+int rev(int i)
+{
+    return n - i - 1;
+}
 
 int main()
 {
@@ -16,78 +41,28 @@ int main()
         int x;
         cin >> x;
         ++cnt[x];
-        if (cnt[x] == 4) {
-            cnt[x] -= 4;
-            if (cnt[x] == 0) {
-                cnt.erase(x);
-            }
-            v4.push_back(x);
-        }
     }
-    for (auto &kv: cnt) {
-        if (kv.second > 1) {
-            kv.second -= 2;
-            v2.push_back(kv.first);
-        }
+    for (auto &[k, v]: cnt) {
+        q.push({v, k});
     }
-    for (auto &kv: cnt) {
-        if (kv.second == 1) {
-            v1.push_back(kv.first);
-        }
+    int m = n / 2;
+    for (int r = 0; r < m; ++r) for (int c = 0; c < m; ++c) {
+        put({{r, c}, {rev(r), c}, {r, rev(c)}, {rev(r), rev(c)}});
     }
-    bool odd = n & 1, ok = true;
-    int m = (n + 1) / 2, cc;
-    for (int r = 0; r < m && ok; ++r) for (int c = 0; c < m && ok; ++c) {
-        if (!odd) {
-            cc = 4;
-        } else {
-            if (r == m-1 && c == m-1) {
-                cc = 1;
-            } else if (r == m-1 || c == m-1) {
-                cc = 2;
-            } else {
-                cc = 4;
-            }
+    if (n & 1) {
+        for (int i = 0; i < m; ++i) {
+            put({{i, m}, {rev(i), m}});
+            put({{m, i}, {m, rev(i)}});
         }
-        if (cc == 1) {
-            if (v1.empty()) {
-                ok = false;
-            } else {
-                ans[r][c] = v1.back();
-                v1.pop_back();
-            }
-        } else if (cc == 2) {
-            if (v2.size()) {
-                ans[r][c] = ans[n-1-r][c] = ans[r][n-1-c] = ans[n-1-r][n-1-c] = v2.back();
-                v2.pop_back();
-            } else {
-                if (v4.empty()) {
-                    ok = false;
-                } else {
-                    ans[r][c] = ans[n-1-r][c] = ans[r][n-1-c] = ans[n-1-r][n-1-c] = v4.back();
-                    v4.pop_back();
-                    v2.push_back(ans[r][c]);
-                }
-            }
-        } else {
-            if (v4.empty()) {
-                ok = false;
-            } else {
-                ans[r][c] = ans[n-1-r][c] = ans[r][n-1-c] = ans[n-1-r][n-1-c] = v4.back();
-                v4.pop_back();
-            }
-        }
+        put({{m, m}});
     }
-    if (!ok) {
-        cout << "NO\n";
-    } else {
-        cout << "YES\n";
-        for (int r = 0; r < n; ++r) {
-            for (int c = 0; c < n; ++c) {
-                cout << ans[r][c] << ' ';
-            }
-            cout << '\n';
+    cout << "YES\n";
+    for (int r = 0; r < n; ++r) {
+        for (int c = 0; c < n; ++c) {
+            cout << ans[r][c] << ' ';
         }
+        cout << '\n';
     }
+
     return 0;
 }
