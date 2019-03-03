@@ -27,7 +27,7 @@ do
         echo Sample Input \#$test_case
         cat $INPUT_NAME$test_case
     else
-        if diff --brief $MY_NAME$test_case $OUTPUT_NAME$test_case; then
+        if diff -w --brief $MY_NAME$test_case $OUTPUT_NAME$test_case; then
             echo [1m[32mSample test \#$test_case: Accepted[0m
         else
             echo [1m[31mSample test \#$test_case: Wrong Answer[0m
