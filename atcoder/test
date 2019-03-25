@@ -1,1 +1,14 @@
-../template/test
+#!/bin/bash
+
+FOLDER="$1"
+ACTION="${2:-test}"
+OPT=""
+if [ "$ACTION" = "submit" ]; then
+    OPT="-u"
+fi
+
+(
+    cd "$FOLDER"
+    g++ sol.cc -o a.out
+    atcoder-tools "$ACTION" $OPT
+)

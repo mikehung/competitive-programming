@@ -5,3 +5,4 @@ a.out
 a.out.*
 time.out
 .DS_Store
+metadata.json

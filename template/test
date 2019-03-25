@@ -9,7 +9,7 @@ fi
 
 (
 cd $FOLDER
-if ! g++ -g -std=c++17 -Wall $DBG sol.cc; then
+if ! g++ -g -std=c++17 -Wall $DBG sol.cc -o a.out; then
     exit
 fi
 
