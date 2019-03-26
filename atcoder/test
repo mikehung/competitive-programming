@@ -7,8 +7,12 @@ if [ "$ACTION" = "submit" ]; then
     OPT="-u"
 fi
 
-(
-    cd "$FOLDER"
-    g++ sol.cc -o a.out
-    atcoder-tools "$ACTION" $OPT
-)
+if [ "$ACTION" = "gen" ]; then
+    atcoder-tools "$ACTION" "$FOLDER"
+else
+    (
+        cd "$FOLDER"
+        g++ sol.cc -o a.out
+        atcoder-tools "$ACTION" $OPT
+    )
+fi
