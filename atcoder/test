@@ -1,18 +1,47 @@
 #!/bin/bash
 
 FOLDER="$1"
-ACTION="${2:-test}"
-OPT=""
-if [ "$ACTION" = "submit" ]; then
-    OPT="-u"
+
+DBG="-DDEBUG"
+if [ -n "$2" ]; then
+	DBG=""
 fi
 
-if [ "$ACTION" = "gen" ]; then
-    atcoder-tools "$ACTION" "$FOLDER"
-else
-    (
-        cd "$FOLDER"
-        g++ sol.cc -o a.out
-        atcoder-tools "$ACTION" $OPT
-    )
+(
+cd $FOLDER
+if ! g++ -g -std=c++17 -Wall $DBG sol.cc -o a.out; then
+    exit
 fi
+
+INPUT_NAME=in
+OUTPUT_NAME=out
+MY_NAME=m_out
+rm -R $MY_NAME* &>/dev/null
+for test_file in $INPUT_NAME*
+do
+    i=$((${#INPUT_NAME}))
+    test_case=${test_file:$i}
+    if ! ./a.out < $INPUT_NAME$test_case > $MY_NAME$test_case; then
+        echo [1m[31mSample test \#$test_case: Runtime Error[0m
+        echo ========================================
+        echo Sample Input \#$test_case
+        cat $INPUT_NAME$test_case
+    else
+        if diff -w --brief $MY_NAME$test_case $OUTPUT_NAME$test_case; then
+            echo [1m[32mSample test \#$test_case: Accepted[0m
+        else
+            echo [1m[31mSample test \#$test_case: Wrong Answer[0m
+            echo ========================================
+            echo Sample Input \#$test_case
+            cat $INPUT_NAME$test_case
+            echo ========================================
+            echo Sample Output \#$test_case
+            cat $OUTPUT_NAME$test_case
+            echo ========================================
+            echo My Output \#$test_case
+            cat $MY_NAME$test_case
+            echo ========================================
+        fi
+    fi
+done
+)
